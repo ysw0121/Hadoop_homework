@@ -1,0 +1,4 @@
+# ignore .vscode
+.vscode
+/homework5
+/src/*.class

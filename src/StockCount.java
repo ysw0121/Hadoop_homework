@@ -1,3 +1,4 @@
+package com.example;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ public class StockCount {
     public static class StockCountReducer extends
         Reducer<Text, IntWritable, Text, Text> { // 仿照WordCount模板
             // 保存股票代码和计数
-            private Map<String, int> CountMap= new HashMap<>();
+            private Map<String, Integer> CountMap= new HashMap<>();
             public void reduce(Text key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
                 int sum = 0;
@@ -47,22 +48,26 @@ public class StockCount {
                 }
                 CountMap.put(key.toString(), sum);
             }
-
-        }
-        // 重写cleanup方法，将结果写入context
-        public void cleanup(Context context) throws IOException, InterruptedException {
-            // 将value从大到小排序
-            List<Map.Entry<String, int>> list = new ArrayList<>(CountMap.entrySet());
-            list.sort((o1, o2) -> (o2.getValue() - o1.getValue()));
             
+            // 重写cleanup方法，将结果写入context
+            @Override
+            public void cleanup(Context context) throws IOException, InterruptedException {
+                // 将value从大到小排序
+                List<Map.Entry<String, Integer>> list = new ArrayList<>(CountMap.entrySet());
+                list.sort((o1, o2) -> (o2.getValue() - o1.getValue()));
+                
 
-            int rank=1;
-            for (Map.Entry<String, int> entry : list) {
-                String res=rank+ ": " +entry.getKey() + ", " + entry.getValue();
-                context.write(new Text(res),null);
-                rank++;
+                int rank=1;
+                for (Map.Entry<String, Integer> entry : list) {
+                    String res=rank+ ": " +entry.getKey() + ", " + entry.getValue();
+                    context.write(new Text(res),null);
+                    rank++;
+                }
             }
+
         }
+        
+        
         public static void main(String[] args) throws Exception {
             Configuration conf = new Configuration();
             String[] otherArgs =
