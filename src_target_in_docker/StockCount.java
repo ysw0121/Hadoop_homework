@@ -28,7 +28,7 @@ public class StockCount {
             throws IOException, InterruptedException {
             // Split the string separated by commas
             String[] stockData = value.toString().split(",");
-            // 去掉多余空格
+
             if(stockData.length > 3) {
                 stock.set(stockData[stockData.length - 1].trim());
                 context.write(stock, code);
@@ -37,8 +37,8 @@ public class StockCount {
         }
     }
     public static class StockCountReducer extends
-        Reducer<Text, IntWritable, Text, Text> { // 仿照WordCount模板
-            // 保存股票代码和计数
+        Reducer<Text, IntWritable, Text, Text> {
+           
             private Map<String, Integer> CountMap= new HashMap<>();
             public void reduce(Text key, Iterable<IntWritable> values, Context context)
                 throws IOException, InterruptedException {
@@ -49,10 +49,10 @@ public class StockCount {
                 CountMap.put(key.toString(), sum);
             }
             
-            // 重写cleanup方法，将结果写入context
+            
             @Override
             public void cleanup(Context context) throws IOException, InterruptedException {
-                // 将value从大到小排序
+               
                 List<Map.Entry<String, Integer>> list = new ArrayList<>(CountMap.entrySet());
                 list.sort((o1, o2) -> (o2.getValue() - o1.getValue()));
                 
@@ -71,8 +71,8 @@ public class StockCount {
         public static void main(String[] args) throws Exception {
             Configuration conf = new Configuration();
             String[] otherArgs =
-                new GenericOptionsParser(conf, args).getRemainingArgs();
-            if (otherArgs.length != 2) { 
+               new GenericOptionsParser(conf, args).getRemainingArgs();
+            if (otherArgs.length != 2) {
               System.err.println("Usage: wordcount <in> <out>");
               System.exit(2);
             }

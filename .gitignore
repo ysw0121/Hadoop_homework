@@ -2,3 +2,5 @@
 .vscode
 /homework5
 /src/*.class
+/src/*.jar
+/src_in_docker/*.class

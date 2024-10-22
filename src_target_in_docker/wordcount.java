@@ -24,14 +24,14 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
-public class wordcount { // 基于hadoop示例改写
+public class wordcount {
 
   public static class TokenizerMapper extends
       Mapper<LongWritable, Text, Text, IntWritable> {
 
     private final static IntWritable one = new IntWritable(1);
     private Text word = new Text();
-    // 停词表
+ 
     private List<String> stopWords = new ArrayList<>();
 
 
@@ -57,12 +57,12 @@ public class wordcount { // 基于hadoop示例改写
     public void map(LongWritable key, Text value, Context context)
         throws IOException, InterruptedException {
       String []line = value.toString().split(",");
-      // 对line[1]列，去掉标点，转化为小写，忽略停词和空字符串
+      
       String headline=line[1].replaceAll("[^a-zA-Z]", " ").toLowerCase();
       for(String s: headline.split(" ")){
         if(s.length()>0 && !stopWords.contains(s)){
-          this.word.set(s);
-          context.write(this.word, one);
+          word.set(s);
+          context.write(word, one);
         }
       }
       
@@ -79,17 +79,17 @@ public class wordcount { // 基于hadoop示例改写
       for (IntWritable val : values) {
         sum += val.get();
       }
-      // <key,sum>写入result
+     
       result.put(key.toString(), sum);
     }
 
     @Override
-    // 重写cleanup方法，将结果写入context
+   
     protected void cleanup(Context context) throws IOException, InterruptedException {
       List<Map.Entry<String, Integer>> list = new ArrayList<>(result.entrySet());
       list.sort((o1, o2) -> (o2.getValue() - o1.getValue()));
       int rank=1;
-      // 输出前100的高频词
+
       for (Map.Entry<String, Integer> entry : list) {
         String res=rank+ ": " +entry.getKey() + ", " + entry.getValue();
         if(rank>100){
@@ -114,13 +114,13 @@ public class wordcount { // 基于hadoop示例改写
     //   System.err.println("Usage: wordcount <in> <out>");
     //   System.exit(2);
     // }
-    // 设置stop-word-list的路径
+    
 
     conf.set("stopwordlist", args[2]);
     Job job = new Job(conf, "word count");
     job.setJarByClass(wordcount.class);
     job.setMapperClass(TokenizerMapper.class);
-    // job.setCombinerClass(IntSumReducer.class);
+//    job.setCombinerClass(IntSumReducer.class);  // an err, java can be compiled but mapreduce cannot work, 
     job.setReducerClass(IntSumReducer.class);
     job.setOutputKeyClass(Text.class);
     job.setOutputValueClass(IntWritable.class);
