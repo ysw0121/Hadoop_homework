@@ -47,9 +47,15 @@ hadoop jar hw5_build/wordcount.jar wordcount /user/hadoop/hw5_input /user/hadoop
 hdfs dfs -get /user/hadoop/hw5_word_output hw5_local_output
 
 ```
-## 任务1设计思路
+## 任务1
+### 运行截图（由于实验时忘记截图，重新运行后所截图如下）
+![stock count](img/stock.png)
+### 设计思路
 
-## 任务2设计思路
+## 任务2
+### 运行截图（由于实验时忘记截图，重新运行后所截图如下）
+![stock count](img/word.png)
+### 设计思路
 
 ## 性能分析和可能的改进
 
