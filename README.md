@@ -48,8 +48,19 @@ hdfs dfs -get /user/hadoop/hw5_word_output hw5_local_output
 
 ```
 ## 任务1
-### 运行截图（由于实验时忘记截图，重新运行后所截图如下）
+### 运行截图（实验时忘记截图，重新运行后所截图如下）
 ![stock count](img/stock.png)
+### 输出示例
+```
+1: MS, 1174
+2: MRK, 1141
+3: MU, 1096
+4: NVDA, 1091
+...
+5901: JPP, 1
+5902: SBRAP, 1
+5903: SCJ, 1
+```
 ### 设计思路
 1. Map阶段：`StockCountMapper`类，对输入的csv数据按逗号分割，用最后一列，提取出股票代码，将其作为键，把1作为值，代表出现一次。
 2. Reduce阶段：`StockCountReducer`类接收`Mapper`输出的键值对，统计每个股票代码的出现次数，并在`cleanup`方法中将结果按出现次数从大到小排序后输出。
@@ -62,8 +73,19 @@ hdfs dfs -get /user/hadoop/hw5_word_output hw5_local_output
 3. 性能提升：在`map`和`reduce`过程中间加入`partition`或`combine`，对数据进行预处理或者分类，都可以减少`reducer`的压力。
 
 ## 任务2
-### 运行截图（由于实验时忘记截图，重新运行后所截图如下）
+### 运行截图（实验时忘记截图，重新运行后所截图如下）
 ![stock count](img/word.png)
+### 输出示例
+```
+1: s, 76104
+2: stocks, 54702
+3: q, 48952
+4: market, 39551
+...
+98: gainers, 4988
+99: deal, 4784
+100: ahead, 4784
+```
 ### 设计思路
 1. TokenizerMapper：负责将输入文本分割成单词，并对每个单词进行处理。在这个类中，定义了一个`setup`方法，用于在映射操作开始前读取停用词列表，并将其存储在一个`List<String>`中。在`map`方法中，对输入的每一行文本进行处理，去掉标点符号，转换为小写，并忽略停用词和空字符串，然后将处理后的单词作为键，1作为值输出，代表第一次出现。
 2. IntSumReducer：负责对映射阶段输出的键值对进行归约操作。在这个类中，定义了一个`reduce`方法，用于累加相同键的值。此外，还重写了`cleanup`方法，在归约操作结束后，将结果写入到输出上下文中。这里使用了一个`Map<String, Integer>`来存储单词及其出现次数，并在`cleanup`方法中对结果进行排序，输出出现频率最高的前100个单词。
